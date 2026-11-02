@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>IBU_CAL_C</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-logo" src="icons/logo.svg" alt="IBU_CAL_C logo">
+        <div class="brand-copy"><strong>IBU_CAL_C</strong><span>CALCULATE · CONVERT · GO</span></div>
+      </div>
+      <div class="top-actions">
+        <button id="f1GuardBtn" class="icon-btn guard-on" title="Pause F1 guard" aria-label="Pause F1 guard">F1</button>
+        <button id="themeBtn" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">☼</button>
+        <button id="historyToggle" class="icon-btn" title="Toggle history" aria-label="Toggle history">◷</button>
+      </div>
+    </header>
+
+    <nav class="modebar" aria-label="Tool mode">
+      <button class="mode active" data-mode="standard">Standard</button>
+      <button class="mode" data-mode="scientific">Scientific</button>
+      <button class="mode" data-mode="converter">Land converter</button>
+    </nav>
+
+    <div class="workspace" id="workspace">
+      <section class="calculator panel" id="calculatorView">
+        <div class="display">
+          <div class="expression" id="expression" aria-live="polite"></div>
+          <div class="result" id="result">0</div>
+          <div class="display-bottom"><span id="angleLabel">DEG</span><span id="status">Ready</span></div>
+        </div>
+        <div class="scientific-grid hidden" id="scientificKeys">
+          <button data-fn="sin">sin</button><button data-fn="cos">cos</button><button data-fn="tan">tan</button><button data-fn="sqrt">√</button><button data-fn="square">x²</button>
+          <button data-fn="asin">sin⁻¹</button><button data-fn="acos">cos⁻¹</button><button data-fn="atan">tan⁻¹</button><button data-fn="log">log</button><button data-fn="ln">ln</button>
+          <button data-fn="pi">π</button><button data-fn="e">e</button><button data-fn="factorial">n!</button><button data-fn="reciprocal">1/x</button><button data-fn="abs">|x|</button>
+          <button id="angleToggle" class="angle-toggle" type="button">DEG / RAD</button>
+        </div>
+        <div class="keypad">
+          <button class="utility" data-action="clear">AC</button><button class="utility" data-action="backspace">⌫</button><button class="utility" data-value="(">(</button><button class="operator" data-value="÷">÷</button>
+          <button data-value="7">7</button><button data-value="8">8</button><button data-value="9">9</button><button class="operator" data-value="×">×</button>
+          <button data-value="4">4</button><button data-value="5">5</button><button data-value="6">6</button><button class="operator" data-value="−">−</button>
+          <button data-value="1">1</button><button data-value="2">2</button><button data-value="3">3</button><button class="operator" data-value="+">+</button>
+          <button data-action="sign">±</button><button data-value="0">0</button><button data-value=".">.</button><button class="equals" data-action="equals">=</button>
+          <button class="utility" data-value=")">)</button><button class="utility" data-value="%">%</button><button class="utility" data-action="ans">Ans</button><button class="utility" data-action="copy">Copy</button>
+        </div>
+        <footer class="calc-footer"><span>Keyboard supported</span><span>Enter = result · Esc = clear</span></footer>
+      </section>
+
+      <section class="converter panel hidden" id="converterView">
+        <div class="section-heading"><div><h1>Land converter</h1><p>Convert land measurements to acres</p></div><span class="mini-icon">↗</span></div>
+        <label class="field-label" for="converterType">Conversion type</label>
+        <select id="converterType" class="compact-select">
+          <option value="feet">Feet dimensions → acres</option>
+          <option value="sqft">Square feet → acres</option>
+          <option value="vara">Varas dimensions → acres</option>
+        </select>
+        <div id="feetOptions" class="option-row">
+          <span>Plot layout</span>
+          <select id="feetDimensions" class="compact-select small-select" aria-label="Feet plot layout"><option value="2">One rectangle · 2 inputs</option><option value="4">Two rectangles · 4 inputs</option></select>
+        </div>
+        <div id="dimensionFields" class="dimension-grid">
+          <label class="dimension-field" id="field1"><span id="label1">Length (ft)</span><input id="measure1" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></label>
+          <label class="dimension-field" id="field2"><span id="label2">Width (ft)</span><input id="measure2" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></label>
+          <label class="dimension-field hidden" id="field3"><span id="label3">Length 2 (ft)</span><input id="measure3" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></label>
+          <label class="dimension-field hidden" id="field4"><span id="label4">Width 2 (ft)</span><input id="measure4" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></label>
+        </div>
+        <p class="helper" id="converterHint">Acres = length × width ÷ 43,560.</p>
+        <div class="acre-card">
+          <div><span class="result-label">RESULT</span><div class="acre-result" id="acreResult">0.000 <small>acres</small></div><p id="acreResultSub" class="result-sub">Enter measurements to calculate.</p></div>
+          <button id="copyAcre" class="copy-btn" title="Copy result" aria-label="Copy acre result">Copy</button>
+        </div>
+        <div class="converter-actions"><button id="clearConverter" class="secondary-btn">Clear fields</button><button id="saveConversion" class="primary-btn">Save result</button></div>
+        <p class="helper varas-note" id="varaNote">Varas basis: 1 vara = 0.835905 metres. This may differ by region.</p>
+      </section>
+
+      <aside class="history-panel panel" id="historyPanel">
+        <div class="history-heading"><div><h2>History</h2><p>Recent calculations</p></div><button id="clearHistory" class="text-btn">Clear</button></div>
+        <div class="history-list" id="historyList"><div class="empty-history"><span>◷</span><strong>No calculations yet</strong><p>Your results will appear here.</p></div></div>
+        <div class="history-foot"><span id="historyCount">0 items</span><span>On this device</span></div>
+      </aside>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>
